@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My-Backup</title>
+    <style>
+        :root {
+            /* Classic Theme (Default) */
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #2d3436;
+            --accent: #0984e3;
+            --accent-glow: rgba(9, 132, 227, 0.3);
+            --border: #dfe6e9;
+            --nav-bg: #ffffff;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="hacker"] {
+            --bg: #0a0a0a;
+            --card-bg: #141414;
+            --text: #00ff41;
+            --accent: #00ff41;
+            --accent-glow: rgba(0, 255, 65, 0.4);
+            --border: #00ff4133;
+            --nav-bg: #000000;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1e272e;
+            --card-bg: #2f3640;
+            --text: #f5f6fa;
+            --accent: #fbc531;
+            --accent-glow: rgba(251, 197, 49, 0.3);
+            --border: #353b48;
+            --nav-bg: #1e272e;
+        }
+
+        [data-theme="yellow"] {
+            --bg: #fffde7;
+            --card-bg: #ffffff;
+            --text: #fbc02d;
+            --accent: #fbc02d;
+            --accent-glow: rgba(251, 192, 45, 0.2);
+            --border: #fff9c4;
+            --nav-bg: #fffde7;
+        }
+
+        [data-theme="blackout"] {
+            --bg: #000000;
+            --card-bg: #000000;
+            --text: #ffffff;
+            --accent: #ffffff;
+            --accent-glow: rgba(255, 255, 255, 0.2);
+            --border: #ffffff;
+            --nav-bg: #000000;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            transition: background 0.5s, color 0.5s;
+            min-height: 100vh;
+        }
+
+        .hidden { display: none !important; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- UI ELEMENTS --- */
+        #login-page { height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { background: var(--card-bg); padding: 30px; border-radius: 15px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; background: transparent; border: 1.5px solid var(--border); border-radius: 8px; color: var(--text); }
+        input:focus { outline: none; border-color: var(--accent); }
+
+        button { width: 100%; padding: 12px; background: var(--accent); color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+        [data-theme="hacker"] button, [data-theme="dark"] button { color: #000; }
+        [data-theme="blackout"] button { background: #fff; color: #000; }
+
+        /* --- DASHBOARD --- */
+        nav { position: sticky; top: 0; background: var(--nav-bg); padding: 15px; display: flex; align-items: center; border-bottom: 1px solid var(--border); z-index: 100; }
+        .content-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 20px; }
+        
+        .tool-card { 
+            background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); 
+            transition: var(--transition); position: relative; cursor: pointer; user-select: none;
+        }
+        .tool-card:active { transform: scale(0.95); opacity: 0.8; }
+        .badge { position: absolute; top: 10px; right: 10px; background: var(--accent); color: #000; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+
+        /* --- MODALS --- */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+        .modal-content { background: var(--card-bg); padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; border: 1px solid var(--border); }
+
+        .dropdown { position: absolute; right: 10px; top: 50px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; display: none; flex-direction: column; width: 180px; z-index: 200; }
+        .dropdown.show { display: flex; }
+        .drop-item { padding: 12px; cursor: pointer; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        .drop-item:hover { background: var(--accent-glow); }
+    </style>
+<style type="text/css" id="dcoder_stylesheet">public class VideoMedia {
+    private String title;
+    private String filePath;
+    private int durationSeconds;
+
+    public VideoMedia(String title, String filePath, int durationSeconds) {
+        this.title = title;
+        this.filePath = filePath;
+        this.durationSeconds = durationSeconds;
+    }
+
+    // Displays metadata in a professional format
+    public void displayInfo() {
+        System.out.println("--- Video Metadata ---");
+        System.out.println("Title: " + title);
+        System.out.println("Path: " + filePath);
+        System.out.println("Duration: " + durationSeconds / 60 + "m " + durationSeconds % 60 + "s");
+    }
+}</style></head>
+<body data-theme="classic">
+
+    <section id="login-page">
+        <div class="card animate-fade">
+            <h2 style="text-align: center;">Assalamualaikum</h2>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="handleLogin()">Tap to continue</button>
+        </div>
+    </section>
+
+    <section id="disclaimer-page" class="hidden" style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px; text-align:center;">
+        <h1>Disclaimer</h1>
+        <p style="margin: 20px 0;">This site uses LocalStorage to save your data. Developer is not responsible if user use it illegally</p>
+        <button onclick="acceptDisclaimer()" style="max-width: 200px;">I Agree, and I take all responsibility</button>
+    </section>
+
+    <section id="main-content" class="hidden">
+        <nav>
+            <div id="welcome-msg" style="font-weight: bold;"></div>
+            <input type="text" id="search" placeholder="Search..." onkeyup="renderTools()" style="margin: 0 15px; flex:1;">
+            <div style="position:relative;">
+                <button onclick="toggleMenu()" style="width:40px; padding:5px; margin:0;">⋮</button>
+                <div id="menu-dropdown" class="dropdown">
+                    <div id="admin-create" class="drop-item hidden" onclick="showModal('createModal')">Create Tool</div>
+                    <div class="drop-item" onclick="showModal('themeModal')">Themes</div>
+                    <div class="drop-item" onclick="showModal('complaintModal')">Complaints</div>
+                    <div class="drop-item" style="color:red;" onclick="logout()">Logout</div>
+                </div>
+            </div>
+        </nav>
+        <div class="content-grid" id="tool-grid"></div>
+    </section>
+
+    <div id="createModal" class="modal hidden">
+        <div class="modal-content">
+            <h3 id="modal-title">Add Tool</h3>
+            <input type="hidden" id="editId">
+            <input type="text" id="tBadge" placeholder="Badge">
+            <input type="text" id="tNum" placeholder="Tool #">
+            <input type="text" id="tName" placeholder="Name">
+            <input type="text" id="tFunc" placeholder="Function">
+            <input type="text" id="tLink" placeholder="URL">
+            <button onclick="saveTool()">Save</button>
+            <button onclick="closeModal('createModal')" style="background:transparent; border:1px solid var(--border); color:var(--text);">Cancel</button>
+        </div>
+    </div>
+
+    <div id="themeModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Select Theme</h3>
+            <button onclick="setTheme('classic')">Classic Light</button>
+            <button onclick="setTheme('hacker')" style="background:#000; color:#00ff41;">Hacker Glow</button>
+            <button onclick="setTheme('dark')" style="background:#2f3640; color:#fff;">Dark Gold</button>
+            <button onclick="setTheme('yellow')" style="background:#fbc02d; color:#000;">Aesthetic Yellow</button>
+            <button onclick="setTheme('blackout')" style="background:#000; color:#fff; border:1px solid #fff;">Deep Black</button>
+            <button onclick="closeModal('themeModal')" style="margin-top:10px;">Close</button>
+        </div>
+    </div>
+
+    <div id="complaintModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Complaints &amp; Replies</h3>
+            <div id="complaint-list" style="max-height: 300px; overflow-y: auto; margin: 15px 0;"></div>
+            <textarea id="compInput" placeholder="Write a complaint..."></textarea>
+            <button onclick="addComplaint()">Submit</button>
+            <button onclick="closeModal('complaintModal')" style="background:transparent; border:1px solid var(--border); color:var(--text);">Close</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = JSON.parse(localStorage.getItem('user')) || null;
+        let tools = JSON.parse(localStorage.getItem('tools')) || [];
+        let complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+        let pressTimer;
+
+        // AUTH
+        function handleLogin() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            if (u === "Raja G" && p === "Raja_125") login(u, 'admin');
+            else if (u && p === "rajaontop") login(u, 'user');
+            else alert("Invalid Login");
+        }
+
+        function login(name, role) {
+            currentUser = { name, role };
+            localStorage.setItem('user', JSON.stringify(currentUser));
+            document.getElementById('login-page').classList.add('hidden');
+            if (localStorage.getItem('agreed')) showMain();
+            else document.getElementById('disclaimer-page').classList.remove('hidden');
+        }
+
+        function acceptDisclaimer() {
+            localStorage.setItem('agreed', 'true');
+            document.getElementById('disclaimer-page').classList.add('hidden');
+            showMain();
+        }
+
+        function showMain() {
+            document.getElementById('main-content').classList.remove('hidden');
+            document.getElementById('welcome-msg').innerText = "Hi, " + currentUser.name;
+            if (currentUser.role === 'admin') document.getElementById('admin-create').classList.remove('hidden');
+            renderTools();
+            renderComplaints();
+        }
+
+        function logout() { localStorage.clear(); location.reload(); }
+
+        // THEMES
+        function setTheme(t) { document.body.dataset.theme = t; localStorage.setItem('theme', t); closeModal('themeModal'); }
+        document.body.dataset.theme = localStorage.getItem('theme') || 'classic';
+
+        // TOOLS LOGIC
+        function saveTool() {
+            const id = document.getElementById('editId').value;
+            const toolData = {
+                id: id ? parseInt(id) : Date.now(),
+                badge: document.getElementById('tBadge').value,
+                num: document.getElementById('tNum').value,
+                name: document.getElementById('tName').value,
+                func: document.getElementById('tFunc').value,
+                link: document.getElementById('tLink').value
+            };
+            if (id) tools = tools.map(t => t.id == id ? toolData : t);
+            else tools.push(toolData);
+            localStorage.setItem('tools', JSON.stringify(tools));
+            renderTools(); closeModal('createModal');
+        }
+
+        function renderTools() {
+            const grid = document.getElementById('tool-grid');
+            const q = document.getElementById('search').value.toLowerCase();
+            grid.innerHTML = '';
+            tools.filter(t => t.name.toLowerCase().includes(q) || t.num.includes(q)).forEach(t => {
+                const card = document.createElement('div');
+                card.className = 'tool-card animate-fade';
+                card.innerHTML = `<span class="badge">${t.badge}</span><small>#${t.num}</small><h3>${t.name}</h3><p>${t.func}</p>`;
+                
+                // Clicking opens link
+                card.onclick = () => window.open(t.link, '_blank');
+
+                // Admin Long Press (3 seconds)
+                if (currentUser.role === 'admin') {
+                    card.onmousedown = card.ontouchstart = () => {
+                        pressTimer = setTimeout(() => {
+                            if(confirm("Admin: Edit this tool? (Cancel to Delete)")) {
+                                editTool(t);
+                            } else if(confirm("Are you sure you want to DELETE?")) {
+                                deleteTool(t.id);
+                            }
+                        }, 3000);
+                    };
+                    card.onmouseup = card.ontouchend = () => clearTimeout(pressTimer);
+                }
+                grid.appendChild(card);
+            });
+        }
+
+        function editTool(t) {
+            document.getElementById('modal-title').innerText = "Edit Tool";
+            document.getElementById('editId').value = t.id;
+            document.getElementById('tBadge').value = t.badge;
+            document.getElementById('tNum').value = t.num;
+            document.getElementById('tName').value = t.name;
+            document.getElementById('tFunc').value = t.func;
+            document.getElementById('tLink').value = t.link;
+            showModal('createModal');
+        }
+
+        function deleteTool(id) {
+            tools = tools.filter(t => t.id !== id);
+            localStorage.setItem('tools', JSON.stringify(tools));
+            renderTools();
+        }
+
+        // COMPLAINTS
+        function addComplaint() {
+            const text = document.getElementById('compInput').value;
+            if (!text) return;
+            complaints.push({ id: Date.now(), user: currentUser.name, text, reply: '' });
+            localStorage.setItem('complaints', JSON.stringify(complaints));
+            document.getElementById('compInput').value = '';
+            renderComplaints();
+        }
+
+        function renderComplaints() {
+            const list = document.getElementById('complaint-list');
+            list.innerHTML = '';
+            complaints.forEach(c => {
+                const div = document.createElement('div');
+                div.style.padding = '10px'; div.style.borderBottom = '1px solid var(--border)';
+                div.innerHTML = `<strong>${c.user}:</strong> ${c.text}
+                <div style="margin-left:20px; color:var(--accent); font-style:italic;">Reply: ${c.reply || '...'}</div>`;
+                
+                if (currentUser.role === 'admin') {
+                    const btn = document.createElement('button');
+                    btn.innerText = "Reply"; btn.style.width = '60px'; btn.style.fontSize = '10px';
+                    btn.onclick = () => {
+                        const r = prompt("Admin Reply:");
+                        if(r) { c.reply = r; localStorage.setItem('complaints', JSON.stringify(complaints)); renderComplaints(); }
+                    };
+                    div.appendChild(btn);
+                }
+                list.appendChild(div);
+            });
+        }
+
+        // UTILS
+        function toggleMenu() { document.getElementById('menu-dropdown').classList.toggle('show'); }
+        function showModal(id) { 
+            if(id === 'createModal' && !document.getElementById('editId').value) {
+                document.getElementById('modal-title').innerText = "Add Tool";
+                document.querySelectorAll('#createModal input').forEach(i => i.value = '');
+            }
+            document.getElementById(id).classList.remove('hidden'); 
+        }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        if (currentUser) showMain();
+    </script>
+
+<script type="text/javascript" id="dcoder_script">#include <iostream>
+#include <string>
+#include <vector>
+
+class VideoBufferManager {
+private:
+    size_t bufferSize;
+    std::vector<char> dataStream;
+
+public:
+    VideoBufferManager(size_t size) : bufferSize(size) {
+        dataStream.reserve(bufferSize);
+    }
+
+    void loadFrameData(const char* data, size_t len) {
+        if (len <= bufferSize) {
+            dataStream.assign(data, data + len);
+            std::cout << "Successfully buffered " << len << " bytes of frame data." << std::endl;
+        }
+    }
+
+    void clearBuffer() {
+        dataStream.clear();
+    }
+};</script></body></html>
